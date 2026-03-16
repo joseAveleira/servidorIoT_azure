@@ -3,6 +3,7 @@
 Servidor para gestionar dispositivos IoT (sensores y actuadores) con **API REST** y **broker MQTT** integrado.
 
 Se conecta a **MongoDB Atlas** en la nube para almacenar usuarios, dispositivos y lecturas.
+test de comit
 
 ---
 
