@@ -9,6 +9,15 @@ const getAllDevices = async (req, res) => {
     }
 };
 
+const getMyDevices = async (req, res) => {
+    try {
+        const devices = await Device.find({ userId: req.user.id });
+        res.status(200).json(devices);
+    } catch (err) {
+        res.status(500).json({ msg: 'Error al obtener tus devices', error: err });
+    }
+};
+
 const createDevice = async (req, res) => {
     try {
         const device = new Device({ ...req.body, userId: req.user.id });
@@ -31,8 +40,12 @@ const getDeviceById = async (req, res) => {
 
 const updateDevice = async (req, res) => {
     try {
-        const device = await Device.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!device) return res.status(404).json({ msg: 'Device no encontrado' });
+        const device = await Device.findOneAndUpdate(
+            { _id: req.params.id, userId: req.user.id },
+            req.body,
+            { new: true }
+        );
+        if (!device) return res.status(404).json({ msg: 'Device no encontrado o no te pertenece' });
         res.json({ msg: 'Device actualizado correctamente', device });
     } catch (err) {
         res.status(500).json({ msg: 'Error al actualizar el device', error: err });
@@ -41,12 +54,12 @@ const updateDevice = async (req, res) => {
 
 const deleteDevice = async (req, res) => {
     try {
-        const device = await Device.findByIdAndDelete(req.params.id);
-        if (!device) return res.status(404).json({ msg: 'Device no encontrado' });
+        const device = await Device.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+        if (!device) return res.status(404).json({ msg: 'Device no encontrado o no te pertenece' });
         res.json({ msg: 'Device eliminado correctamente' });
     } catch (err) {
         res.status(500).json({ msg: 'Error al eliminar el device', error: err });
     }
 };
 
-module.exports = { getAllDevices, createDevice, getDeviceById, updateDevice, deleteDevice };
+module.exports = { getAllDevices, getMyDevices, createDevice, getDeviceById, updateDevice, deleteDevice };
