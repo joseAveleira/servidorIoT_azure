@@ -28,7 +28,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Intento de login con email:", req.body);
+    console.log("Intento de login con email:", email);
     const user = await User.findOne({ email });
     
     if (!user) {
