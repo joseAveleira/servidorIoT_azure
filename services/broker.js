@@ -11,15 +11,18 @@ async function startBroker() {
     const aedes = await Aedes.createBroker();
 
     aedes.authenticate = (client, username, password, callback) => {
-        const expectedUsername =  'datosiot';
-        const expectedPassword =  'datosiot@2026';
+        const expectedUsername = 'datosiot';
+        const expectedPassword = 'datosiot@2026';
 
         const passedPassword = password ? password.toString() : null;
 
+        console.log(`[MQTT] Auth → usuario recibido: "${username}", password recibida: ${passedPassword ? `"${passedPassword.slice(0, 3)}..."` : 'null'}`);
+
         if (username === expectedUsername && passedPassword === expectedPassword) {
+            console.log(`[MQTT] Autenticación correcta para ${username}`);
             callback(null, true);
         } else {
-            console.log(`[MQTT] Intento de conexión fallido — usuario: ${username}`);
+            console.log(`[MQTT] Intento de conexión fallido — usuario: "${username}", esperado: "${expectedUsername}"`);
             const error = new Error('Autenticación fallida');
             error.returnCode = 4;
             callback(error, null);
