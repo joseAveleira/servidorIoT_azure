@@ -61,7 +61,7 @@ app.use('/devices', deviceRoutes);
 app.use('/readings', readingRoutes);
 
 // Ruta de prueba
-app.get('/test', (req, res) => res.json({ msg: 'El API REST funciona!' }));
+app.get('/test', (req, res) => res.json({ msg: 'El API REST Todo esta bien!' }));
 
 // Función para formatear el texto
 function formatearTexto(texto, maxLineLength) {
