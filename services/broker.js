@@ -11,7 +11,7 @@ async function startBroker() {
     const aedes = await Aedes.createBroker();
 
     aedes.authenticate = (client, username, password, callback) => {
-        const expectedUsername = 'datosiot';
+        const expectedUsername = 'admin';
         const expectedPassword = 'datosiot@2026';
 
         const passedPassword = password ? password.toString() : null;
