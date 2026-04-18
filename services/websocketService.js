@@ -1,24 +1,33 @@
 const WebSocket = require('ws');
+const url = require('url');
 
 const PORT = 9000;
 
 function startWebSocketService() {
     const wss = new WebSocket.Server({ port: PORT });
 
-    wss.on('connection', (ws) => {
-        console.log('Cliente WebRTC conectado');
+    wss.on('connection', (ws, req) => {
+        // Leer ?room=xxx de la URL; si no viene, sala 'default'
+        const { query } = url.parse(req.url, true);
+        ws.room = query.room || 'default';
+
+        console.log(`Cliente WebRTC conectado a sala: ${ws.room}`);
 
         ws.on('message', (data) => {
-            // Reenviar el mensaje a todos los demás clientes (señalización WebRTC)
+            // Reenviar solo a los clientes de la MISMA sala
             wss.clients.forEach((client) => {
-                if (client !== ws && client.readyState === WebSocket.OPEN) {
+                if (
+                    client !== ws &&
+                    client.readyState === WebSocket.OPEN &&
+                    client.room === ws.room
+                ) {
                     client.send(data.toString());
                 }
             });
         });
 
         ws.on('close', () => {
-            console.log('Cliente WebRTC desconectado');
+            console.log(`Cliente WebRTC desconectado de sala: ${ws.room}`);
         });
 
         ws.on('error', (err) => {
