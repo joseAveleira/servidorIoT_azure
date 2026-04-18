@@ -8,6 +8,7 @@ const authRoutes = require('./routes/auth.routes');
 const deviceRoutes = require('./routes/devices.routes');
 const readingRoutes = require('./routes/readings.routes');
 const chatWithCohere = require('./services/cohereIA');
+const { startWebSocketService } = require('./services/websocketService');
 const fs = require('fs');
 const path = require('path');
 
@@ -45,6 +46,9 @@ broker.startBroker().then(() => {
             broker.publish('cohere/IAGameResponse', textoFormateado);
         }
     });
+
+    // Iniciar servicio WebSocket para señalización WebRTC
+    startWebSocketService();
 
     // Iniciar servidor express
     app.listen(port, () => console.log(`Servidor corriendo en el puerto ${port}`));
