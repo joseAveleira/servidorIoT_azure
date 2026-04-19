@@ -11,9 +11,9 @@ function startWebSocketService() {
         const { query } = url.parse(req.url, true);
         ws.room = query.room || 'default';
 
-        console.log(`Cliente WebRTC conectado a sala: ${ws.room}`);
+        console.log(`Cliente conectado a sala: ${ws.room}`);
 
-        ws.on('message', (data) => {
+        ws.on('message', (data, isBinary) => {
             // Reenviar solo a los clientes de la MISMA sala
             wss.clients.forEach((client) => {
                 if (
@@ -21,13 +21,13 @@ function startWebSocketService() {
                     client.readyState === WebSocket.OPEN &&
                     client.room === ws.room
                 ) {
-                    client.send(data.toString());
+                    client.send(data, { binary: isBinary });
                 }
             });
         });
 
         ws.on('close', () => {
-            console.log(`Cliente WebRTC desconectado de sala: ${ws.room}`);
+            console.log(`Cliente desconectado de sala: ${ws.room}`);
         });
 
         ws.on('error', (err) => {
@@ -35,7 +35,7 @@ function startWebSocketService() {
         });
     });
 
-    console.log(`Servicio WebSocket (señalización WebRTC) escuchando en el puerto ${PORT}`);
+    console.log(`Servicio WebSocket escuchando en el puerto ${PORT}`);
     return wss;
 }
 
